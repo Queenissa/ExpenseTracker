@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class ExpenseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +14,8 @@ class UserController extends Controller
     public function index()
     {
         //
-        $users = User::all();
-
-        return compact('users');
+        $expenses = Contact::all();
+        return compact('expenses');
     }
 
     /**
@@ -27,7 +26,6 @@ class UserController extends Controller
     public function create()
     {
         //
-
     }
 
     /**
@@ -38,7 +36,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'expense_amount'=>'required',
+            'expense_date'=>'required',
+            'expense_category'
+        ]);
     }
 
     /**
