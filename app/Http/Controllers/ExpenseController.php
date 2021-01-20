@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Expense;
+use Illuminate\Support\Facades\Validator;
 
 class ExpenseController extends Controller
 {
@@ -14,8 +16,8 @@ class ExpenseController extends Controller
     public function index()
     {
         //
-        $expenses = Contact::all();
-        return compact('expenses');
+        return Expense::all();
+        
     }
 
     /**
@@ -36,11 +38,17 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'expense_amount'=>'required',
+        $validation = Validator::make($request->all(),[
+            'expense_amount'=>'required|numeric| max:500',
             'expense_date'=>'required',
             'expense_category'
         ]);
+
+        if($validation->fails()) {
+            return $validation->errors();
+        }
+        $expenses= Expense::create($request->all());
+        return response()->json($expenses);
     }
 
     /**
@@ -72,9 +80,30 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Expenses $expenses, $id)
     {
-        //
+        $expense = Expense::findOrFail($id);
+        
+        $validation = Validator::make($request->all(),[
+            'expense_amount'=>'required|numeric| max:500',
+            'expense_date'=>'required',
+            'expense_category'
+        ]);
+
+        if($validation->fails()) {
+            return $validation->errors();
+        }
+
+        $expense = Expense::findOrFail($id);
+
+        $expenses->update([
+            'expense_amount'=> $request->expense_amount,
+            'expense_date'=>$request->expense_date,
+            'expense_category'=>$request->expense_category
+        ]);
+        
+
+        return response()->json($expenses);
     }
 
     /**

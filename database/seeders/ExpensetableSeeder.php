@@ -3,19 +3,19 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+
 use App\Models\Expense;
 
-class DatabaseSeeder extends Seeder
+class ExpensetableSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      *
      * @return void
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
-
-        Expense::factory()->count(10)->create();
+        Expense::truncate();
+        Expense::factory(10)->create();
     }
 }
