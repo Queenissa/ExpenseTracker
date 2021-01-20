@@ -59,7 +59,9 @@ class ExpenseController extends Controller
      */
     public function show($id)
     {
-        //
+        $expense = Expense::find($id);
+        
+        return response()->json($expense);
     }
 
     /**
@@ -70,7 +72,12 @@ class ExpenseController extends Controller
      */
     public function edit($id)
     {
-        //
+        $result =[];
+        
+
+        $expense = Expense::find($id);
+        
+        return response()->json($expense);
     }
 
     /**

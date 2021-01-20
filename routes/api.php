@@ -18,4 +18,5 @@ use App\Http\Controllers\ExpenseController;
 Route::get('/expenses',[ExpenseController::class,'index']);
 Route::post('/expenses',[ExpenseController::class,'store']);
 Route::put('/expenses/{id}',[ExpenseController::class,'update']);
+Route::get('expenses/{id}',[ExpenseController::class,'show']);
 
