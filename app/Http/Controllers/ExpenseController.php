@@ -55,13 +55,22 @@ class ExpenseController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+     * @return \Illuminate\Http\Response     */
     public function show($id)
     {
-        $expense = Expense::find($id);
-        
-        return response()->json($expense);
+        $response = [];
+
+        try{
+            $expense = Expense::findOrFail($id);
+            $response["code"] = 200;
+            $response["expense"] = $expense;
+
+        }catch(\Exception $e){
+            $response["errors"] = "Expense not found.";
+            $response["code"] = 400;
+        }
+        return response($response, $response["code"]);
+
     }
 
     /**
@@ -73,7 +82,7 @@ class ExpenseController extends Controller
     public function edit($id)
     {
         $result =[];
-        
+
 
         $expense = Expense::find($id);
         
