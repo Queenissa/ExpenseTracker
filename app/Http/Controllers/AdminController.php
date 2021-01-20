@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 
-class UserController extends Controller
+class AdminController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +13,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::all();
+        //
     }
 
     /**
@@ -25,7 +24,6 @@ class UserController extends Controller
     public function create()
     {
         //
-
     }
 
     /**
@@ -37,25 +35,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
-        $request->validate([
-            'firstname'=>'required',
-            'lastname'=>'required',
-            'email'=>'required',
-            'password'=>'required'
-        ]);
-
-        $user = User::create($request->all());
-
-        return response()->json($user);
-
-        // $user = new User([
-        //     'firstname'=>$request->get('firstname'),
-        //     'lastname'=>$request->get('lastname'),
-        //     'email'=>$request->get('email'),
-        //     'password'=>$requets->get('password')
-        // ]);
-
-        // $user->save();
     }
 
     /**
@@ -67,7 +46,6 @@ class UserController extends Controller
     public function show($id)
     {
         //
-        return User::find($id);
     }
 
     /**
@@ -91,10 +69,6 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $user  = User::findOrFail($id);
-        $user->update($request->all());
-
-        return $user;
     }
 
     /**
@@ -103,13 +77,8 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function delete(Request $request,$id)
+    public function destroy($id)
     {
         //
-        $user = User::findOrFail($id);
-        $user->delete();
-
-        return 204;
-
     }
 }
