@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ExpenseController;
-use DB;
+use Illuminate\Support\Facades\DB;
+use App\Models\Expense;
+use App\Http\Controllers;
+use Resources\Views;
+
 
 class ExpenseGraphController extends Controller
 {
@@ -15,18 +18,18 @@ class ExpenseGraphController extends Controller
      */
     public function index()
     {
-        $expense = DB::table('expenses')
-                ->select(
-                    DB::raw('expense_category as category'),
-                    DB::raw('expense_amount as amount')
-                )
-                ->groupBy('category')
-                ->get();
-        $array[] = ['Category', 'Amount'];
-        foreach ($expense as $key => $value) {
-            $array[++$key]=[$value->category,$value->amount];
+        $data = DB::table('expenses')
+           ->select(
+            DB::raw('expense_category as category'),
+            DB::raw('sum(expense_amount) as number'))
+           ->groupBy('category')
+           ->get();
+        $array[] = ['Category', 'Number'];
+        foreach($data as $key => $value)
+        {
+          $array[++$key] = [$value->category, $value->number];
         }
-        return view('chart')->with('gender',json_encode($array));
+        return view('chart')->with('category', json_encode($array));
     }
 
     /**

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ExpenseGraphController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,4 +61,5 @@ Route::put('/expenses/{id}',[ExpenseController::class,'update']);
 Route::get('expenses/{id}/edit',[ExpenseController::class,'edit']);
 Route::delete('expenses/{id}',[ExpenseController::class,'destroy']);
 
+Route::get('/chart',[ExpenseGraphController::class,'index']);
 
