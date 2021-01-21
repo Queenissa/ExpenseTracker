@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ExpenseGraphController;
 
 
 /*
@@ -65,5 +66,8 @@ Route::get('/expensesbycategory', [ExpenseController::class, 'groupExpense']);
 Route::get('/expenseslastweek', [ExpenseController::class, 'last7DaysExpense']);
 Route::get('/currentyearexpense', [ExpenseController::class, 'currentYearExpense']);
 Route::get('/userexpense', [UserController::class, 'getUserExpense']);
+Route::get('expenses/{id}/edit',[ExpenseController::class,'edit']);
+Route::delete('expenses/{id}',[ExpenseController::class,'destroy']);
 
+Route::get('/chart',[ExpenseGraphController::class,'index']);
 

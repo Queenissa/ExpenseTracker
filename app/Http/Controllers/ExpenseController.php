@@ -42,7 +42,11 @@ class ExpenseController extends Controller
     {
         $validation = Validator::make($request->all(),[
             'expense_amount'=>'required|numeric| max:500',
-            'expense_date'=>'required',
+            // 'expense_date'=>'required',
+            'expense_date'=>[
+                'required',
+                'before_or_equal:'. now()->format('Y-m-d')
+            ],
             'expense_category'
         ]);
 
@@ -68,7 +72,7 @@ class ExpenseController extends Controller
             $response["expense"] = $expense;
 
         }catch(\Exception $e){
-            $response["errors"] = "Expense not found.";
+            $response["errors"] = "Expense not found." .$e;
             $response["code"] = 400;
         }
         return response($response, $response["code"]);
@@ -83,7 +87,10 @@ class ExpenseController extends Controller
      */
     public function edit($id)
     {
-        //
+
+        // $expense = Expense::find($id);
+        
+        // return response()->json($expense);
     }
 
     /**
@@ -93,13 +100,16 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,$id)
     {
         $expense = Expense::findOrFail($id);
         
         $validation = Validator::make($request->all(),[
             'expense_amount'=>'required|numeric| max:500',
-            'expense_date'=>'required',
+            'expense_date'=>[
+                'required',
+                'before_or_equal:'. now()->format('Y-m-d')
+            ],
             'expense_category'
         ]);
 
@@ -109,14 +119,14 @@ class ExpenseController extends Controller
 
         $expense = Expense::findOrFail($id);
 
-        $expenses->update([
+        $expense->update([
             'expense_amount'=> $request->expense_amount,
             'expense_date'=>$request->expense_date,
             'expense_category'=>$request->expense_category
         ]);
-        
 
-        return response()->json($expenses);
+        $expense->save();
+        return response()->json($expense);
     }
 
     /**
@@ -127,7 +137,24 @@ class ExpenseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $response = [];
+
+        try{
+            $expense = Expense::findOrFail($id);
+            $response["code"] = 200;
+            $response["expense"] = $expense;
+            $result = $expense->delete();
+            if($result)
+            {
+                return ["message"=>"Record has been deleted"];
+            }
+        }catch(\Exception $e){
+            $response["errors"] = "Expense not found.";
+            $response["code"] = 400;
+        }
+        return response($response, $response["code"]);
+
+       
     }
 
 
