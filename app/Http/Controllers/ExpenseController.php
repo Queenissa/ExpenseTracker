@@ -160,9 +160,11 @@ class ExpenseController extends Controller
 
     public function previousDayExpense()
     {
-        $previousExpense = Expense::where('created_at','>=',Carbon::now()->subdays(1))->groupBy('expense_category')->sum('expense_amount');
-        return $previousExpense;
+        // $previousExpense = Expense::where('created_at','>=',Carbon::now()->subdays(1))->groupBy('expense_category')->sum('expense_amount');
+        // return $previousExpense;
 
+        $previousDayExpense = Expense::whereRaw("DAY(expense_date) = '" . Carbon::yesterday()->format('Y-m-d') . "'")->get('expense_category');
+        return $previousDayExpense;
     }
 
     
