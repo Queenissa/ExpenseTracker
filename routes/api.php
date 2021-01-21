@@ -57,6 +57,7 @@ Route::get('/expenses',[ExpenseController::class,'index']);
 Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
 Route::post('/expenses',[ExpenseController::class,'store']);
 Route::put('/expenses/{id}',[ExpenseController::class,'update']);
-Route::get('expenses/{id}',[ExpenseController::class,'show']);
+Route::get('expenses/{id}/edit',[ExpenseController::class,'edit']);
+Route::delete('expenses/{id}',[ExpenseController::class,'destroy']);
 
 
