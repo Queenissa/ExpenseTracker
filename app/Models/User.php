@@ -21,6 +21,7 @@ class User extends Authenticatable
         'lastname',
         'email',
         'password',
+        'is_admin'
     ];
 
     /**
@@ -41,4 +42,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function expense()
+    {
+        return $this->hasMany('App\Models\Expense', 'id', 'user_id');
+    }
 }

@@ -15,7 +15,7 @@ class CreateExpensesTable extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->unsigned()->nullable();
+            $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->double('expense_amount',9,2);
             $table->date('expense_date');
@@ -45,6 +45,5 @@ class CreateExpensesTable extends Migration
         $table->dropForeign('expenses_user_id_foreign');
         $table->dropIndex('expenses_user_id_index');
         $table->dropColumn('user_id');
-        
     }
 }

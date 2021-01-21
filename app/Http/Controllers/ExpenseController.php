@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Expense;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use DB;
 
 class ExpenseController extends Controller
 {
@@ -91,7 +93,7 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Expenses $expenses, $id)
+    public function update(Request $request, $id)
     {
         $expense = Expense::findOrFail($id);
         
@@ -127,4 +129,76 @@ class ExpenseController extends Controller
     {
         //
     }
+
+
+    public function previousDayExpense()
+    {
+        $previousExpense = Expense::where('created_at','>=',Carbon::now()->subdays(1))->groupBy('expense_category')->sum('expense_amount');
+        return $previousExpense;
+
+    }
+
+    
+    
+
+    public function last7DaysExpense()
+    {
+        $previous_week = strtotime("-1 week +1 day");
+        $start_week = strtotime("last sunday midnight",$previous_week);
+        $end_week = strtotime("next saturday",$start_week);
+        $start_week = date("Y-m-d",$start_week);
+        $end_week = date("Y-m-d",$end_week);
+       
+        Expense::whereBetween('created_at', [$start_week, $end_week])->get(['expense_category','created_at']);
+
+    }
+
+
+    public function last30DaysExpense($id)
+    {
+
+    }
+
+
+    //expenses in current year
+    public function currentYearExpense()
+    {
+        $response =[];
+        
+        try{
+            $currentyear = DB::table('expenses')->whereYear('expense_date', Carbon::now())->get()->groupBy('expense_category');
+            $response['currentyear'] = $currentyear;
+            $response['code'] = 200;
+
+    }   catch(\Exception $e){
+            $response["errors"] = "Record not found.";
+            $response["code"] = 400;
+    }
+
+        return response($response, $response["code"]);
+    }
+
+
+    //expenses by category
+    public function groupExpense()
+    {
+        $response = [];
+        
+         try{
+            $expenses = DB::table('expenses')->get()->groupBy('expense_category');
+            $response['expenses'] = $expenses;
+            $response['code'] = 200;
+
+    }   catch(\Exception $e){
+            $response["errors"] = "Record not found.";
+            $response["code"] = 400;
+        }
+        return response($response, $response['code']);
+       
+    }
+
+
+   
+
+
 }

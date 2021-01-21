@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpenseController;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -51,11 +52,18 @@ Route::get('users/{id}', [UserController::class, 'show']);
 Route::post('users', [UserController::class, 'store']);
 Route::put('users/{id}', [UserController::class,'update']);
 Route::delete('users/{id}', [UserController::class, 'delete']);
+Route::post('/add-user', [UserController::class, 'insertRecord']);
+Route::get('/get-user/{id}', [UserController::class, 'fetchExpenseByUser']);
 
 
 Route::get('/expenses',[ExpenseController::class,'index']);
 Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
 Route::post('/expenses',[ExpenseController::class,'store']);
 Route::put('/expenses/{id}',[ExpenseController::class,'update']);
+Route::get('/previousdayexpenses', [ExpenseController::class, 'previousDayExpense']);
+Route::get('/expensesbycategory', [ExpenseController::class, 'groupExpense']);
+Route::get('/expenseslastweek', [ExpenseController::class, 'last7DaysExpense']);
+Route::get('/currentyearexpense', [ExpenseController::class, 'currentYearExpense']);
+Route::get('/userexpense', [UserController::class, 'getUserExpense']);
 
 

@@ -13,6 +13,8 @@ return [
     |
     */
 
+    'Carbon' => 'Carbon\Carbon',
+    
     'name' => env('APP_NAME', 'Laravel'),
 
     /*

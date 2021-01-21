@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Expense;
 
 class UserController extends Controller
 {
@@ -112,4 +113,44 @@ class UserController extends Controller
         return 204;
 
     }
+
+
+    public function insertRecord(Request $request)
+    {
+        $expense = new Expense();
+
+        $expense->expense_amount = $request->get('expense_amount');
+        $expense->expense_date = $request->get('expense_date');
+        $expense->expense_category= $request->get('expense_category');
+        $user = new User();
+        $user->firstname = $request->get('firstname');
+        $user->lastname = $request->get('lastname');
+        $user->email = $request->get('email');
+        $user->password = encrypt($request->get('password'));
+        $user->save();
+        $user->expense()->save($expense);
+
+        return "Record has been created";
+    }
+
+
+    public function fetchExpenseByUser($id){
+        
+        $response = [];
+        try{
+            $expense = User::findOrFail($id)->expense;
+        } catch(\Exception $e){
+            $response["errors"] = "ID not found";
+            $response["code"] = 400;
+        }
+        
+        return response()->json($expense);
+    }
+
+
+ }
+
+
+
+    
 }

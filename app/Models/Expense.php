@@ -10,7 +10,12 @@ class Expense extends Model
     use HasFactory;
 
     protected $fillable = [
-         'expense_amount', 'expense_date', 'expense_category' 
+        'user_id', 'expense_amount', 'expense_date', 'expense_category' 
     ];
 
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id', 'id');
+    }
 }
