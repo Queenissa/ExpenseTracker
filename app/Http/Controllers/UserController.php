@@ -4,153 +4,117 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Expense;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use DB;
+
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return User::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-        $request->validate([
-            'firstname'=>'required',
-            'lastname'=>'required',
-            'email'=>'required',
-            'password'=>'required'
+    
+    //method for user registration
+    public function register(Request $request) {
+        $validator  =   Validator::make($request->all(), [
+            "firstname"  =>  "required",
+            "lastname"  =>  "required",
+            "email"  =>  "required|email",
+            "password"  =>  "required|min:8"
         ]);
 
-        $user = User::create($request->all());
-
-        return response()->json($user);
-
-        // $user = new User([
-        //     'firstname'=>$request->get('firstname'),
-        //     'lastname'=>$request->get('lastname'),
-        //     'email'=>$request->get('email'),
-        //     'password'=>$requets->get('password')
-        // ]);
-
-        // $user->save();
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-        return User::find($id);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-        $user  = User::findOrFail($id);
-        $user->update($request->all());
-
-        return $user;
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function delete(Request $request,$id)
-    {
-        //
-        $user = User::findOrFail($id);
-        $user->delete();
-
-        return 204;
-
-    }
-
-
-    public function insertRecord(Request $request)
-    {
-        $expense = new Expense();
-
-        $expense->expense_amount = $request->get('expense_amount');
-        $expense->expense_date = $request->get('expense_date');
-        $expense->expense_category= $request->get('expense_category');
-        $user = new User();
-        $user->firstname = $request->get('firstname');
-        $user->lastname = $request->get('lastname');
-        $user->email = $request->get('email');
-        $user->password = encrypt($request->get('password'));
-        $user->save();
-        $user->expense()->save($expense);
-
-        return "Record has been created";
-    }
-
-
-    public function fetchExpenseByUser($id){
-        
-        $response = [];
-        try{
-            $expense = User::findOrFail($id)->expense;
-        } catch(\Exception $e){
-            $response["errors"] = "ID not found";
-            $response["code"] = 400;
+        if($validator->fails()) {
+            return response()->json(["status" => "failed", "validation_errors" => $validator->errors()]);
         }
-        
-        return response()->json($expense);
+
+        $inputs = $request->all();
+        $inputs["password"] = Hash::make($request->password);
+
+        $user = User::create($inputs);
+
+        if(!is_null($user)) {
+            return response()->json(["status" => "success", "message" => "Success! registration completed", "data" => $user]);
+        }
+        else {
+            return response()->json(["status" => "failed", "message" => "Registration failed!"]);
+        }       
     }
 
 
- }
+
+    //method for user login with api token
+    public function login(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            "email" =>  "required|email",
+            "password" =>  "required",
+        ]);
+
+        if($validator->fails()) {
+            return response()->json(["validation_errors" => $validator->errors()]);
+        }
+
+        $user = User::where("email", $request->email)->first();
+
+        if(is_null($user)) {
+            return response()->json(["status" => "failed", "message" => "Failed! email not found"]);
+        }
+
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+            $user = Auth::user();
+            $token = $user->createToken('my-app-token')->plainTextToken;
+
+            return response()->json(["status" => "success", "login" => true, "token" => $token, "data" => $user]);
+        }
+        else {
+            return response()->json(["status" => "failed", "success" => false, "message" => "Whoops! invalid password"]);
+        }
+    }
+
+
+        //method for user logout and delete user's api token
+        public function logout(Request $request)
+        {
+            $request->user()->currentAccessToken()->delete();
+            return response()->json([
+                'status_code' => 200,
+                'message' => 'Token deleted successfully.'
+            ]);
+        }
 
 
 
+
+
+    //method for updating user profile
+    public function updateUserProfile(Request $request)
+    {
+      
+        $user = Auth::user();
+        $validator      =       Validator::make($request->all(), [
+            "firstname" => "required",
+            "lastname" => "required",
+            "email" => "required|email",
+            "password" => "required|min:8"
+
+        ]);
+
+        if($validator->fails()) {
+            return response()->json(["status" => "failed", "validation_errors" => $validator->errors()]);
+        }
+
+        $userUpdate = DB::table('users')->where('id', $user->id)->update([
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
+
+        return response()->json(["status" => "success", "message" => "Success! profile updated"]);
+
+    }
+
+
+    
     
 }
