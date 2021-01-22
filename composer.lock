@@ -1037,6 +1037,13 @@
                 "laravel",
                 "sanctum"
             ],
+<<<<<<< HEAD
+=======
+            "support": {
+                "issues": "https://github.com/laravel/sanctum/issues",
+                "source": "https://github.com/laravel/sanctum"
+            },
+>>>>>>> 3a7414c2a03d686ed26c5322118246600804ac13
             "time": "2020-11-24T17:31:19+00:00"
         },
         {

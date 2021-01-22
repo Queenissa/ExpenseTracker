@@ -17,30 +17,28 @@ use App\Http\Controllers\ExpenseGraphController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Auth::user();
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group(['middleware' => 'auth:sanctum'], function(){
+    Route::put('/users/updateprofile', [UserController::class, 'updateUserProfile']);
+    Route::get('/userexpenses', [ExpenseController::class, 'getExpenseOfUser']);  
+    Route::get('/userexpenses/{id}', [ExpenseController::class, 'getExpenseOfUserById']);
+    Route::get('/userexpensesbycategory', [ExpenseController::class, 'getExpenseOfUserByCategory']);
+    Route::post('/expenses/add', [ExpenseController::class, 'addUserExpenses']);
+    Route::put('/expenses/update/{id}', [ExpenseController::class, 'updateUserExpenses']);
+    Route::delete('/expenses/delete/{id}', [ExpenseController::class, 'deleteUserExpenses']);
+    Route::post('/logout', [UserController::class, 'logout']);
+
+});
 
 
-Route::get('users', [UserController::class, 'index']);
-Route::get('users/{id}', [UserController::class, 'show']);
-Route::post('users', [UserController::class, 'store']);
-Route::put('users/{id}', [UserController::class,'update']);
-Route::delete('users/{id}', [UserController::class, 'delete']);
-Route::post('/add-user', [UserController::class, 'insertRecord']);
-Route::get('/get-user/{id}', [UserController::class, 'fetchExpenseByUser']);
+Route::post('/register', [UserController::class, 'register']);
+Route::post('/login',[UserController::class,'login']);
 
-
-Route::get('/expenses',[ExpenseController::class,'index']);
-Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
-Route::post('/expenses/{user}',[ExpenseController::class,'store']);
-Route::put('/expenses/{id}',[ExpenseController::class,'update']);
-
-Route::get('/userexpense', [UserController::class, 'getUserExpense']);
-Route::get('expenses/{id}/edit',[ExpenseController::class,'edit']);
-Route::delete('expenses/{id}',[ExpenseController::class,'destroy']);
 
 Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart']);
 Route::get('/chart/week',[ExpenseGraphController::class,'weeklyChart']);

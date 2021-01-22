@@ -18,11 +18,10 @@ class UserTableSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            'firstname' => Str::random(15),
-            'lastname' => Str::random(15),
-            'email' => Str::random(10).'@gmail.com',
-            'is_admin' => 1,
-            'password' => Hash::make('password'),
+            'firstname' => 'Rhea',
+            'lastname' => 'Ardiente',
+            'email' => 'rhea.ardiente@gmail.com',
+            'password' => Hash::make('ardiente143')
         ]);
     }
 }

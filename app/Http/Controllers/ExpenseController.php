@@ -4,125 +4,152 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Expense;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use DB;
 
 class ExpenseController extends Controller
 {
-    public function index()
-    {
-        return Expense::all();
-        
-    }
-
-
-    public function store(Request $request)
-    {
-        $validation = Validator::make($request->all(),[
-            'expense_amount'=>'required|numeric| max:1000',
-            'expense_date'=>[
-                'required',
-                'before_or_equal:'. now()->format('Y-m-d')
-            ],
-            'expense_category'
-        ]);
-
-        if($validation->fails()) {
-            return $validation->errors();
-        }
-        $expenses= Expense::create($request->all());
-
-        return response()->json($expenses);
-    }
-
-    public function show($id)
-    {
-        $response = [];
-
-        try{
-            $expense = Expense::findOrFail($id);
-            $response["code"] = 200;
-            $response["expense"] = $expense;
-
-        }catch(\Exception $e){
-            $response["errors"] = "Expense not found." .$e;
-            $response["code"] = 400;
-        }
-
-        return response($response, $response["code"]);
-
-    }
-
-    
-    public function update(Request $request,$id)
-    {
-        $expense = Expense::findOrFail($id);
-        
-        $validation = Validator::make($request->all(),[
-            'expense_amount'=>'required|numeric| max:1000',
-            'expense_date'=>[
-                'required',
-                'before_or_equal:'.Carbon::now()->format('Y-m-d')
-            ],
-            'expense_category'
-        ]);
-
-        if($validation->fails()) {
-            return $validation->errors();
-        }
-
-        $expense = Expense::findOrFail($id);
-        $expense->update([
-            'expense_amount'=> $request->expense_amount,
-            'expense_date'=>$request->expense_date,
-            'expense_category'=>$request->expense_category
-        ]);
-        $expense->save();
-
-        return response()->json($expense);
-    }
-
    
-    public function destroy($id)
+    //method for adding expense for specific user
+    public function addUserExpenses(Request $request)
+     {
+        $user = Auth::user();
+        $validation = Validator::make($request->all(),[
+              'expense_amount'=>'required|numeric| max:1000',
+              'expense_date'=>[
+                  'required',
+                  'before_or_equal:'. now()->format('Y-m-d')
+              ],
+              'expense_category'
+          ]);
+  
+          if($validation->fails()) {
+              return $validation->errors();
+          }
+          else
+          {
+              $expense = new Expense();
+              $expense->user_id=$user->id;
+              $expense->expense_amount = $request->expense_amount;
+              $expense->expense_date = $request->expense_date;
+              $expense->expense_category = $request->expense_category;
+              $response = $expense->save();
+  
+              return response()->json($expense);
+          }
+     }
+
+
+
+
+    //method for deleting expense of specific user
+    public function deleteUserExpenses(Request $request, $id)
     {
+        $user = Auth::user();
         $response = [];
 
         try{
-            $expense = Expense::findOrFail($id);
+            $userId = DB::table('expenses')->where('user_id', $user->id)->where('id', $id)->delete();
             $response["code"] = 200;
-            $response["expense"] = $expense;
-            $result = $expense->delete();
-
-            if($result)
-            {
-                return ["message"=>"Record has been deleted"];
-            }
-        }catch(\Exception $e)
-        {
-            $response["errors"] = "Expense not found.";
+            $response["message"] = "Record has been deleted";
+           
+        }catch(\Exception $e){
+            $response["error"] = "Expense not found.";
             $response["code"] = 400;
         }
 
         return response($response, $response["code"]);
-
        
-    } 
-
-    //expenses in a day
-    public function currentDayExpense(){
-        $data = Expense::select(
-        DB::raw('sum(expense_amount) as number'))
-        ->where('expense_date','=', now()->toDateString())
-       ->sum('expense_amount');
-
-    //    dd($data);
-    return response()->json($data);
-  
-}
     }
 
 
-    
+
+   //method for updating expense of specific user
+    public function updateUserExpense(Request $request, $id)
+    {
+        $user = Auth::user();
+        $response = [];
+        try{
+            $update = DB::table('expenses')->where('user_id', $user->id)->where('id', $id)->update([
+                'expense_amount'=> $request->expense_amount,
+                'expense_date'=>$request->expense_date,
+                'expense_category'=>$request->expense_category
+            ]);
+
+            $response["message"] = "Record has been updated";
+            $response["code"] = 200;
+           
+        }
+        catch(\Exception $e){
+            $response["error"] = "Record not found. $e";
+            $response["code"] = 400;
+        }
+        return response($response, $response['code']);
+    }
+
+
+
+
+    //method for getting expenses of specific user by category
+    public function getExpenseOfUserByCategory(Request $request)
+    {
+       $user = Auth::user();
+       $response = [];
+        try{
+            $userExpense = DB::table('expenses')->where('user_id', $user->id)->get()->groupBy('expense_category');
+            $response['userExpense'] = $userExpense;
+            $response['code'] = 200;
+       }
+        catch(\Exception $e){
+            $response["error"] = "Record not found.";
+            $response["code"] = 400;
+       }
+        return response($response, $response['code']);
+    }
+
+
+
+
+    //method for getting expenses of specific user
+    public function getExpenseOfUser(Request $request)
+    {
+        $user = Auth::user();
+        $response = [];
+        try{
+            $userExpense = DB::table('expenses')->where('user_id', $user->id)->get();
+            $response['userExpense'] = $userExpense;
+            $response['code'] = 200;
+       }
+        catch(\Exception $e){
+            $response["error"] = "Record not found.";
+            $response["code"] = 400;
+       }
+        return response($response, $response['code']);
+    }
+
+
+
+
+    //method for getting specific expense of specific user
+    public function getExpenseOfUserById(Request $request, $id)
+    {
+        $user = Auth::user();
+        $response = [];
+        try{
+            $userExpense = DB::table('expenses')->where('user_id', $user->id)->where('id', $id)->get();
+            $response['userExpense'] = $userExpense;
+            $response['code'] = 200;
+       }
+        catch(\Exception $e){
+            $response["error"] = "Record not found.";
+            $response["code"] = 400;
+       }
+        return response($response, $response['code']);
+    }
+
+}
 
 
