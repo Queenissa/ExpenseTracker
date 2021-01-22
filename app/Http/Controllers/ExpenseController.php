@@ -60,6 +60,7 @@ class ExpenseController extends Controller
             $response["error"] = "Expense not found.";
             $response["code"] = 400;
         }
+
         return response($response, $response["code"]);
        
     }

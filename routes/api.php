@@ -40,5 +40,7 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login',[UserController::class,'login']);
 
 
-Route::get('/chart',[ExpenseGraphController::class,'index']);
-
+Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart']);
+Route::get('/chart/week',[ExpenseGraphController::class,'weeklyChart']);
+Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart']);
+Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);

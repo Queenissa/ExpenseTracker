@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Expense extends Model
 {
@@ -11,6 +12,10 @@ class Expense extends Model
 
     protected $fillable = [
         'user_id', 'expense_amount', 'expense_date', 'expense_category' 
+    ];
+
+    protected $casts = [
+        'expense_date' => 'date'  
     ];
 
 
