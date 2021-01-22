@@ -38,6 +38,7 @@ class ExpenseController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
         $validation = Validator::make($request->all(),[
@@ -54,6 +55,7 @@ class ExpenseController extends Controller
             return $validation->errors();
         }
         $expenses= Expense::create($request->all());
+
         return response()->json($expenses);
     }
 
@@ -75,6 +77,7 @@ class ExpenseController extends Controller
             $response["errors"] = "Expense not found." .$e;
             $response["code"] = 400;
         }
+
         return response($response, $response["code"]);
 
     }
@@ -108,7 +111,7 @@ class ExpenseController extends Controller
             'expense_amount'=>'required|numeric| max:500',
             'expense_date'=>[
                 'required',
-                'before_or_equal:'. now()->format('Y-m-d')
+                'before_or_equal:'.Carbon::now()->format('Y-m-d')
             ],
             'expense_category'
         ]);
@@ -118,14 +121,13 @@ class ExpenseController extends Controller
         }
 
         $expense = Expense::findOrFail($id);
-
         $expense->update([
             'expense_amount'=> $request->expense_amount,
             'expense_date'=>$request->expense_date,
             'expense_category'=>$request->expense_category
         ]);
-
         $expense->save();
+
         return response()->json($expense);
     }
 
@@ -144,14 +146,17 @@ class ExpenseController extends Controller
             $response["code"] = 200;
             $response["expense"] = $expense;
             $result = $expense->delete();
+
             if($result)
             {
                 return ["message"=>"Record has been deleted"];
             }
-        }catch(\Exception $e){
+        }catch(\Exception $e)
+        {
             $response["errors"] = "Expense not found.";
             $response["code"] = 400;
         }
+
         return response($response, $response["code"]);
 
        

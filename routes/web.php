@@ -23,4 +23,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/chart',[ExpenseGraphController::class,'index'])->name('views.chart');
+Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart'])->name('views.yesterday');
+Route::get('/chart/week',[ExpenseGraphController::class, 'weeklyChart'])->name('views.lastWeek');
+Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart'])->name('views.lastMonth');
+Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart'])->name('views.year');

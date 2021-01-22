@@ -59,7 +59,7 @@ Route::get('/get-user/{id}', [UserController::class, 'fetchExpenseByUser']);
 
 Route::get('/expenses',[ExpenseController::class,'index']);
 Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
-Route::post('/expenses',[ExpenseController::class,'store']);
+Route::post('/expenses/{user}',[ExpenseController::class,'store']);
 Route::put('/expenses/{id}',[ExpenseController::class,'update']);
 Route::get('/previousdayexpenses', [ExpenseController::class, 'previousDayExpense']);
 Route::get('/expensesbycategory', [ExpenseController::class, 'groupExpense']);
@@ -69,5 +69,7 @@ Route::get('/userexpense', [UserController::class, 'getUserExpense']);
 Route::get('expenses/{id}/edit',[ExpenseController::class,'edit']);
 Route::delete('expenses/{id}',[ExpenseController::class,'destroy']);
 
-Route::get('/chart',[ExpenseGraphController::class,'index']);
-
+Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart']);
+Route::get('/chart/week',[ExpenseGraphController::class,'weeklyChart']);
+Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart']);
+Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);

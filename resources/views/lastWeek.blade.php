@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>laravel google pie chart tutorial example - nicesnippets.com</title>
+    <title>Last Week</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
@@ -18,7 +18,7 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Last 7 Days</h3>
+                        <h3 class="panel-title">Last Week</h3>
                     </div>
                     <div class="panel-body" align="center">
                         <div id="pie_chart" style="width:750px; height:450px;">

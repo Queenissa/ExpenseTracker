@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Expense;
 use App\Http\Controllers;
 use Resources\Views;
+use Carbon\Carbon;
 
 
 class ExpenseGraphController extends Controller
@@ -16,85 +17,92 @@ class ExpenseGraphController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $data = DB::table('expenses')
-           ->select(
+    public function yesterdayChart()
+    {   
+        $data = Expense::select(
             DB::raw('expense_category as category'),
             DB::raw('sum(expense_amount) as number'))
+            ->where('expense_date' ,now()->yesterday())
            ->groupBy('category')
            ->get();
+      
         $array[] = ['Category', 'Number'];
+
         foreach($data as $key => $value)
         {
           $array[++$key] = [$value->category, $value->number];
         }
-        return view('chart')->with('category', json_encode($array));
+
+        return view('yesterday')->with('category', json_encode($array));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function weeklyChart()
     {
-        //
+
+        $data = Expense::select(
+            DB::raw('expense_category as category'),
+            DB::raw('sum(expense_amount) as number'))
+            ->where('expense_date','>', now()->subDays(7))
+           ->groupBy('category')
+           ->get();
+
+        //    dd($data);
+      
+        $array[] = ['Category', 'Number'];
+
+        foreach($data as $key => $value)
+        {
+          $array[++$key] = [$value->category, $value->number];
+        }
+
+        return view('lastWeek')->with('category', json_encode($array));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function monthlyChart()
     {
-        //
+
+        $data = Expense::select(
+            DB::raw('expense_category as category'),
+            DB::raw('sum(expense_amount) as number'))
+            ->where('expense_date','>', now()->subMonth())
+           ->groupBy('category')
+           ->get();
+
+        //    dd($data);
+      
+        $array[] = ['Category', 'Number'];
+
+        foreach($data as $key => $value)
+        {
+          $array[++$key] = [$value->category, $value->number];
+        }
+
+        return view('lastMonth')->with('category', json_encode($array));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    
+    public function yearlyChart()
     {
-        //
+
+        $data = Expense::select(
+            DB::raw('expense_category as category'),
+            DB::raw('sum(expense_amount) as number'))
+            ->where('expense_date','>', now()->subYear())
+           ->groupBy('category')
+           ->get();
+
+        //    dd($data);
+      
+        $array[] = ['Category', 'Number'];
+
+        foreach($data as $key => $value)
+        {
+          $array[++$key] = [$value->category, $value->number];
+        }
+
+        return view('year')->with('category', json_encode($array));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

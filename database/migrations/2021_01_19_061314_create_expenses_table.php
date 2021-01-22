@@ -18,7 +18,7 @@ class CreateExpensesTable extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->double('expense_amount',9,2);
-            $table->date('expense_date');
+            $table->date('expense_date')->nullable();
             $table->enum('expense_category',[
                 "Food",
                 "Savings",
