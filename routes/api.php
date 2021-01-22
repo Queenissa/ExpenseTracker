@@ -22,31 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::get('users', function(){
-//     return User::all();
-// });
 
-// Route::get('users/{id}', function($id){
-//     return User::find($id);
-// }); 
-
-
-// Route::post('users', function(Request $request){
-//     return User::create($request->all);
-// });
-
-// Route::put('users/{id}', function(Request $request, $id){
-//     $user = User::findOrFail($id);
-//     $user = update($request->all());
-
-//     return $user;
-// });
-
-// Route::delete('users/{id}', function($id){
-//     User::find($id)->delete();  
-
-//     return 204;
-// });
 
 Route::get('users', [UserController::class, 'index']);
 Route::get('users/{id}', [UserController::class, 'show']);
@@ -61,10 +37,7 @@ Route::get('/expenses',[ExpenseController::class,'index']);
 Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
 Route::post('/expenses/{user}',[ExpenseController::class,'store']);
 Route::put('/expenses/{id}',[ExpenseController::class,'update']);
-Route::get('/previousdayexpenses', [ExpenseController::class, 'previousDayExpense']);
-Route::get('/expensesbycategory', [ExpenseController::class, 'groupExpense']);
-Route::get('/expenseslastweek', [ExpenseController::class, 'last7DaysExpense']);
-Route::get('/currentyearexpense', [ExpenseController::class, 'currentYearExpense']);
+
 Route::get('/userexpense', [UserController::class, 'getUserExpense']);
 Route::get('expenses/{id}/edit',[ExpenseController::class,'edit']);
 Route::delete('expenses/{id}',[ExpenseController::class,'destroy']);
@@ -73,3 +46,4 @@ Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart']);
 Route::get('/chart/week',[ExpenseGraphController::class,'weeklyChart']);
 Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart']);
 Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);
+Route::get('/currentexpenses',[ExpenseController::class,'currentDayExpense']);

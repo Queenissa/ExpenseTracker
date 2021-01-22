@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseGraphController;
+use App\Http\Controllers\ExpenseController;
 
 
 /*
@@ -27,3 +28,4 @@ Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart'])-
 Route::get('/chart/week',[ExpenseGraphController::class, 'weeklyChart'])->name('views.lastWeek');
 Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart'])->name('views.lastMonth');
 Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart'])->name('views.year');
+Route::get('/currentexpenses',[ExpenseController::class,'currentDayExpense']);
