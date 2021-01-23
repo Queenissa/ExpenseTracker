@@ -8,20 +8,20 @@ use App\Models\Expense;
 use App\Http\Controllers;
 use Resources\Views;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 
 class ExpenseGraphController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+   
+    //method for showing the expenses in previous day of specific user in the pie graph
     public function yesterdayChart()
     {   
+        $user = Auth::user();
         $data = Expense::select(
             DB::raw('expense_category as category'),
             DB::raw('sum(expense_amount) as number'))
+            ->where('user_id', $user->id)
             ->where('expense_date' ,now()->yesterday())
            ->groupBy('category')
            ->get();
@@ -37,12 +37,17 @@ class ExpenseGraphController extends Controller
     }
 
 
+    
+
+    //method for showing the expenses in the current week of specific user in the pie graph
     public function weeklyChart()
     {
 
+        $user = Auth::user();
         $data = Expense::select(
             DB::raw('expense_category as category'),
             DB::raw('sum(expense_amount) as number'))
+            ->where('user_id', $user->id)
             ->where('expense_date','>', now()->subDays(7))
            ->groupBy('category')
            ->get();
@@ -60,12 +65,16 @@ class ExpenseGraphController extends Controller
     }
 
 
+
+
+    //method for showing the expenses by current month of specific user in the pie graph
     public function monthlyChart()
     {
-
+      $user = Auth::user();
         $data = Expense::select(
             DB::raw('expense_category as category'),
             DB::raw('sum(expense_amount) as number'))
+            ->where('user_id', $user->id)
             ->where('expense_date','>', now()->subMonth())
            ->groupBy('category')
            ->get();
@@ -82,13 +91,18 @@ class ExpenseGraphController extends Controller
         return view('lastMonth')->with('category', json_encode($array));
     }
 
-    
+
+
+
+    //method for showing the expenses in the current year of specific user in the pie graph
     public function yearlyChart()
     {
 
+      $user = Auth::user();
         $data = Expense::select(
             DB::raw('expense_category as category'),
             DB::raw('sum(expense_amount) as number'))
+            ->where('user_id', $user->id)
             ->where('expense_date','>', now()->subYear())
            ->groupBy('category')
            ->get();

@@ -72,10 +72,13 @@ class UserController extends Controller
     }
 
 
+
+
         //method for user logout and delete user's api token
         public function logout(Request $request)
         {
-            $request->user()->currentAccessToken()->delete();
+            $user = Auth::user();
+            $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
             return response()->json([
                 'status_code' => 200,
                 'message' => 'Token deleted successfully.'
