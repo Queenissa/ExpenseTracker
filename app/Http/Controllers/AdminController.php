@@ -1,84 +1,68 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Expense;
+use DB;
 
 class AdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    
+
+    //method for getting all the users
+    public function getAllUsers()
     {
-        //
+        $users = User::all();
+        return $users;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+
+    //method for getting/viewing expenses history of specific user
+    public function getUserExpensesHistory(Request $request, $id)
     {
-        //
+
+        $response = [];
+
+        try{
+            $userExpensesHistory = Expense::Where('user_id', $id)
+            ->groupBy('expense_category')  
+            ->select([DB::raw("SUM(expense_amount) as total_amount, expense_category")])
+            ->pluck('total_amount', 'expense_category');
+            $response["code"] = 200;
+            $response["userExpensesHistory"] = $userExpensesHistory;
+          
+          
+        }
+        catch(\Expense $e){
+            $response["error"] = "Record not found.";
+            $response["code"] = 400;
+        }
+        return response($response, $response["code"]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+
+    //method for deleting user and his/her expenses
+    public function deleteUser(Request $request, $id)
     {
-        //
+        $response = [];
+
+        try{
+            $user = DB::table('expenses')->where('user_id', $id )->delete();
+            $response["code"] = 200;
+            $response["message"] = "Record has been deleted";
+        }
+        catch(\Exception $e)
+        {
+            $response["error"] = "Expense not found.";
+            $response["code"] = 400;
+        }
+        
+        return response($response, $response['code']);
+     
+    
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

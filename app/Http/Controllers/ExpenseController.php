@@ -67,8 +67,9 @@ class ExpenseController extends Controller
 
 
 
+
    //method for updating expense of specific user
-    public function updateUserExpense(Request $request, $id)
+    public function updateUserExpenses(Request $request, $id)
     {
         $user = Auth::user();
         $response = [];
@@ -133,7 +134,7 @@ class ExpenseController extends Controller
 
 
 
-    //method for getting specific expense of specific user
+    //method for getting specific expense of specific  user expense id
     public function getExpenseOfUserById(Request $request, $id)
     {
         $user = Auth::user();
@@ -197,6 +198,11 @@ class ExpenseController extends Controller
 
 
     
+    public function expensesList()
+    {
+        $expenses = Expense::all();
+        return $expenses;
+    }
 }
 
 
