@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth:sanctum'], function(){
     Route::put('/expenses/update/{id}', [ExpenseController::class, 'updateUserExpenses']);
     Route::delete('/expenses/delete/{id}', [ExpenseController::class, 'deleteUserExpenses']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/validation',[ExpenseController::class,'validateExpenses']);
 
 });
 
@@ -45,3 +46,4 @@ Route::get('/chart/week',[ExpenseGraphController::class,'weeklyChart']);
 Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart']);
 Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);
 Route::get('/currentexpenses',[ExpenseController::class,'currentDayExpense']);
+
