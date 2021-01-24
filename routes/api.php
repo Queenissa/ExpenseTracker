@@ -25,7 +25,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'auth:sanctum'], function(){
     Route::put('/users/updateprofile', [UserController::class, 'updateUserProfile']);
-    Route::get('/userexpenses', [ExpenseController::class, 'getExpenseOfUser']);  
+    Route::get('/userexpenses', [ExpenseController::class, 'getExpenseOfUser']);   
     Route::get('/userexpenses/{id}', [ExpenseController::class, 'getExpenseOfUserById']);
     Route::get('/userexpensesbycategory', [ExpenseController::class, 'getExpenseOfUserByCategory']);
     Route::post('/expenses/add', [ExpenseController::class, 'addUserExpenses']);
