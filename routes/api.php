@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ExpenseGraphController;
+use App\Http\Controllers\AdminController;
 
 
 /*
@@ -44,3 +45,7 @@ Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart']);
 Route::get('/chart/week',[ExpenseGraphController::class,'weeklyChart']);
 Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart']);
 Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);
+Route::get('/currentexpenses',[ExpenseController::class,'currentDayExpense']);
+
+
+Route::get('/users', [AdminController::class, 'getAllUsers'] );
