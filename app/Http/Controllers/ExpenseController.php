@@ -67,6 +67,7 @@ class ExpenseController extends Controller
 
 
 
+
    //method for updating expense of specific user
     public function updateUserExpenses(Request $request, $id)
     {
@@ -150,6 +151,13 @@ class ExpenseController extends Controller
         return response($response, $response['code']);
     }
 
+
+
+    public function expensesList()
+    {
+        $expenses = Expense::all();
+        return $expenses;
+    }
 }
 
 

@@ -116,7 +116,15 @@ class UserController extends Controller
         return response()->json(["status" => "success", "message" => "Success! profile updated"]);
 
     }
+    
 
+    
+    //users
+    public function usersList()
+    {
+        $users = User::all();
+        return $users;
+    }
 
     
     

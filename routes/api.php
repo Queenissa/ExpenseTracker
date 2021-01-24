@@ -24,6 +24,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//Authenticated user
 Route::group(['middleware' => 'auth:sanctum'], function(){
     Route::put('/users/updateprofile', [UserController::class, 'updateUserProfile']);
     Route::get('/userexpenses', [ExpenseController::class, 'getExpenseOfUser']);   
@@ -48,4 +49,13 @@ Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);
 Route::get('/currentexpenses',[ExpenseController::class,'currentDayExpense']);
 
 
+//Admin
 Route::get('/users', [AdminController::class, 'getAllUsers'] );
+Route::get('/userexpenses/history/{id}', [AdminController::class, 'getUserExpensesHistory']);
+Route::delete('/users/delete/{id}', [AdminController::class, 'deleteUser']);
+
+
+
+//api
+Route::get('/userslist', [UserController::class, 'usersList']);
+Route::get('/expenseslist', [ExpenseController::class, 'expensesList']);
