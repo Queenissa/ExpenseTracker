@@ -13,36 +13,49 @@ use DB;
 class ExpenseController extends Controller
 {
    
-    //method for adding expense for specific user
-    public function addUserExpenses(Request $request)
-     {
-        $user = Auth::user();
-        $validation = Validator::make($request->all(),[
-              'expense_amount'=>'required|numeric| max:1000',
-              'expense_date'=>[
-                  'required',
-                  'before_or_equal:'. now()->format('Y-m-d')
-              ],
-              'expense_category'
-          ]);
+
+      //add validated expenses
+      public function addValidatedUserExpenses(Request $request)
+      {
   
-          if($validation->fails()) {
-              return $validation->errors();
+          $user = Auth::user();
+          $validation = Validator::make($request->all(),[
+               'expense_amount'=>'required|numeric| max:1000',
+               'expense_date'=>[
+                   'required',
+                   'before_or_equal:'. now()->format('Y-m-d')
+               ],
+               'expense_category'
+           ]);
+          
+          if($validation) {
+  
+              $expenses = Expense::where('expense_date','=',now()->toDateString())->get()->sum('expense_amount');
+              $amount = 1000;
+  
+              if($expenses < $amount){
+                  $expense = new Expense();
+                  $expense->user_id = $user->id;
+                  $expense->expense_amount = $request->expense_amount;
+                  $expense->expense_date = $request->expense_date;
+                  $expense->expense_category = $request->expense_category;
+                  $response = $expense->save();
+  
+                  return response()->json($expense);
+              }
+              else
+              {
+                  return 'Unable to add!. You have reach the limit amount!';
+              }
           }
           else
           {
-              $expense = new Expense();
-              $expense->user_id=$user->id;
-              $expense->expense_amount = $request->expense_amount;
-              $expense->expense_date = $request->expense_date;
-              $expense->expense_category = $request->expense_category;
-              $response = $expense->save();
-  
-              return response()->json($expense);
+              return $validation->errors();
           }
-     }
+      }
 
 
+    
 
 
     //method for deleting expense of specific user
@@ -154,50 +167,6 @@ class ExpenseController extends Controller
 
 
 
-    //add validated expenses
-    public function addValidatedUserExpenses(Request $request)
-    {
-
-        $user = Auth::user();
-        $validation = Validator::make($request->all(),[
-             'expense_amount'=>'required|numeric| max:1000',
-             'expense_date'=>[
-                 'required',
-                 'before_or_equal:'. now()->format('Y-m-d')
-             ],
-             'expense_category'
-         ]);
-        
-        if($validation) {
-
-            $expenses = Expense::where('expense_date','=',now()->toDateString())->get()->sum('expense_amount');
-            $amount = 1000;
-
-            if($expenses < $amount){
-                $expense = new Expense();
-                $expense->user_id = $user->id;
-                $expense->expense_amount = $request->expense_amount;
-                $expense->expense_date = $request->expense_date;
-                $expense->expense_category = $request->expense_category;
-                $response = $expense->save();
-
-                return response()->json($expense);
-            }
-            else
-            {
-                return 'Unable to add!. You have reach the limit amount!';
-            }
-        }
-        else
-        {
-            return $validation->errors();
-        }
-    }
-
-
-
-
-    
     public function expensesList()
     {
         $expenses = Expense::all();
