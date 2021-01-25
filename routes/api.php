@@ -33,6 +33,15 @@ Route::group(['middleware' => 'auth:sanctum'], function(){
     Route::post('/expenses/add', [ExpenseController::class, 'addUserExpenses']);
     Route::put('/expenses/update/{id}', [ExpenseController::class, 'updateUserExpenses']);
     Route::delete('/expenses/delete/{id}', [ExpenseController::class, 'deleteUserExpenses']);
+
+
+    Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart']);
+    Route::get('/chart/week',[ExpenseGraphController::class,'weeklyChart']);
+    Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart']);
+    Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);
+    Route::get('/currentexpenses',[ExpenseController::class,'currentDayExpense']);
+
+
     Route::post('/logout', [UserController::class, 'logout']);
 
 });
@@ -42,12 +51,7 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login',[UserController::class,'login']);
 
 
-Route::get('/chart/yesterday',[ExpenseGraphController::class,'yesterdayChart']);
-Route::get('/chart/week',[ExpenseGraphController::class,'weeklyChart']);
-Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart']);
-Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);
-Route::get('/currentexpenses',[ExpenseController::class,'currentDayExpense']);
-
+ 
 
 //Admin
 Route::get('/users', [AdminController::class, 'getAllUsers'] );

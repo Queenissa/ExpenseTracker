@@ -27,7 +27,7 @@ class CreateExpensesTable extends Migration
                 "Clothing",
                 "Electricity",
                 "Personal Care",
-                "Transportation",
+                "Transportation",  
                 "Others"]);
             
             $table->timestamps();
