@@ -155,7 +155,7 @@ class ExpenseController extends Controller
 
 
     //add validated expenses
-    public function validateExpenses(Request $request)
+    public function addValidatedUserExpenses(Request $request)
     {
 
         $user = Auth::user();

@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth:sanctum'], function(){
     Route::get('/userexpenses', [ExpenseController::class, 'getExpenseOfUser']);   
     Route::get('/userexpenses/{id}', [ExpenseController::class, 'getExpenseOfUserById']);
     Route::get('/userexpensesbycategory', [ExpenseController::class, 'getExpenseOfUserByCategory']);
-    Route::post('/expenses/add', [ExpenseController::class, 'addUserExpenses']);
+    Route::post('/expenses/add',[ExpenseController::class,'addValidatedUserExpenses']);
     Route::put('/expenses/update/{id}', [ExpenseController::class, 'updateUserExpenses']);
     Route::delete('/expenses/delete/{id}', [ExpenseController::class, 'deleteUserExpenses']);
 
@@ -43,7 +43,7 @@ Route::group(['middleware' => 'auth:sanctum'], function(){
 
 
     Route::post('/logout', [UserController::class, 'logout']);
-    Route::post('/validation',[ExpenseController::class,'validateExpenses']);
+    
 
 });
 
@@ -53,7 +53,6 @@ Route::post('/login',[UserController::class,'login']);
 
 
  
-
 //Admin
 Route::get('/users', [AdminController::class, 'getAllUsers'] );
 Route::get('/userexpenses/history/{id}', [AdminController::class, 'getUserExpensesHistory']);
