@@ -40,6 +40,8 @@ Route::group(['middleware' => 'auth:sanctum'], function(){
     Route::get('/chart/month',[ExpenseGraphController::class,'monthlyChart']);
     Route::get('/chart/year',[ExpenseGraphController::class,'yearlyChart']);
     Route::get('/currentexpenses',[ExpenseController::class,'currentDayExpense']);
+    Route::get('/expensesbydate',[ExpenseController::class,'expensesBydate']);
+    Route::post('/expenserange',[ExpenseController::class,'byRange']);
 
 
     Route::post('/logout', [UserController::class, 'logout']);
