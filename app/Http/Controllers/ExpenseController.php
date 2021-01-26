@@ -30,7 +30,7 @@ class ExpenseController extends Controller
           
           if($validation) {
   
-              $expenses = Expense::where('expense_date','=',now()->toDateString())->get()->sum('expense_amount');
+              $expenses = Expense::where('user_id', $user->id)->where('expense_date','=',now()->toDateString())->get()->sum('expense_amount');
               $amount = 1000;
   
               if($expenses < $amount){
@@ -171,6 +171,31 @@ class ExpenseController extends Controller
     {
         $expenses = Expense::all();
         return $expenses;
+    }
+
+
+    //method for showing all expenses categorized by date
+
+    public function expensesByDate(Request $request, $id)
+    {
+           $user = Auth::user();
+           $response = [];
+            try{
+               
+                $userExpense = DB::table('expenses')
+                ->where('user_id', $user->id)->where('id'->$id)->groupBy('expense_date')->get();
+
+                dd($userExpense);
+
+                $response['userExpense'] = $userExpense;
+                $response['code'] = 200;
+           }
+            catch(\Exception $e){
+                $response["error"] = "Record not found.";
+                $response["code"] = 400;
+           }
+            return response($response, $response['code']);
+    
     }
 }
 

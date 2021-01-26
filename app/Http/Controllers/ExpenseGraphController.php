@@ -17,11 +17,11 @@ class ExpenseGraphController extends Controller
     //method for showing the expenses in previous day of specific user in the pie graph
     public function yesterdayChart()
     {   
-        $user = Auth::user();
+        // $user = Auth::user();
         $data = Expense::select(
             DB::raw('expense_category as category'),
             DB::raw('sum(expense_amount) as number'))
-            ->where('user_id', $user->id)
+            // ->where('user_id', $user->id)
             ->where('expense_date' ,now()->yesterday())
            ->groupBy('category')
            ->get();
