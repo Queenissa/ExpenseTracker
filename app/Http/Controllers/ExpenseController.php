@@ -28,9 +28,15 @@ class ExpenseController extends Controller
                'expense_category'
            ]);
           
-          if($validation) {
-  
-              $expenses = Expense::where('user_id', $user->id)->where('expense_date','=',now()->toDateString())->get()->sum('expense_amount');
+          if(!$validation) {
+
+            return $validation->errors();
+
+          }
+          else
+          {
+              $expenses = Expense::where('user_id',$user->id)
+              ->where('expense_date','=',now()->toDateString())->get()->sum('expense_amount');
               $amount = 1000;
   
               if($expenses < $amount){
@@ -47,10 +53,6 @@ class ExpenseController extends Controller
               {
                   return 'Unable to add!. You have reach the limit amount!';
               }
-          }
-          else
-          {
-              return $validation->errors();
           }
       }
 
@@ -197,6 +199,34 @@ class ExpenseController extends Controller
             return response($response, $response['code']);
     
     }
+
+
+    //method for getting expenses by range
+
+    public function byRange(Request $request)
+    {
+        $user = Auth::user();
+        $response = [];
+        try
+        {
+            $date_from = new Carbon($request->date_from);
+            $date_to = new Carbon($request->date_to);
+
+            // dd($date_from);
+            $result = DB::table('expenses')
+                ->where('expense_date','>=',$date_from->toDateString())
+                ->where('expense_date','<=',$date_from->toDateString())
+                ->get();
+            $response['result'] = $result;
+            $response["code"] =200;
+        }
+        catch(\Exception $e)
+        {
+            $response["error"] = "Record not found.";
+            $response["code"] = 400;
+        }
+    }
+
 }
 
 
